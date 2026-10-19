@@ -28,14 +28,29 @@ def check_status_values(df: pd.DataFrame, column: str, allowed: list) -> dict:
         "pass": invalid.sum() == 0
     }
 
+def check_schema_drift(source_df: pd.DataFrame, target_df: pd.DataFrame) -> dict:
+    src_cols = set(source_df.columns)
+    tgt_cols = set(target_df.columns)
+    missing = src_cols - tgt_cols
+    extra = tgt_cols - src_cols
+    return {
+        "missing_columns": list(missing),
+        "extra_columns": list(extra),
+        "pass": len(missing) == 0 and len(extra) == 0
+    }
+
 def run_quality_checks():
-    tx = pd.read_csv("data/processed/transactions_target.csv")
+    source = pd.read_csv("data/raw/transactions_source.csv")
+    target = pd.read_csv("data/processed/transactions_target.csv")
+    
     results = {
-        "null_checks": check_nulls(tx, ["transaction_id", "account_id", "amount"]),
-        "amount_checks": check_transaction_amounts(tx),
-        "status_checks": check_status_values(tx, "status", ["COMPLETED", "PENDING", "FAILED"])
+        "null_checks": check_nulls(target, ["transaction_id", "account_id", "amount"]),
+        "amount_checks": check_transaction_amounts(target),
+        "status_checks": check_status_values(target, "status", ["COMPLETED", "PENDING", "FAILED"]),
+        "schema_drift": check_schema_drift(source, target)
     }
     return results
 
 if __name__ == "__main__":
-    print(run_quality_checks())
+    import json
+    print(json.dumps(run_quality_checks(), indent=2))

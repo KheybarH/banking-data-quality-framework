@@ -1,3 +1,6 @@
+Bir az formatı pozulub. Bunu tam kopyalayıb `README.md`-ə yapışdır:
+
+```markdown
 # Banking Data Quality & Reconciliation Framework
 
 Personal portfolio project demonstrating data quality engineering practices for financial / banking data.
@@ -13,17 +16,17 @@ Data quality issues are one of the most common causes of production incidents in
 - Generates realistic synthetic banking data (customers, accounts, transactions)
 - Performs reconciliation between source and target datasets
 - Runs data quality checks (nulls, duplicates, business rules, schema consistency)
-- Generates an HTML report with pass/fail results
+- Generates a clean HTML report with pass/fail results
 - Designed to be easily extended with Great Expectations or integrated into Airflow
 
 ## Key Features
 
-- **Row count reconciliation** between source and target
-- **Checksum / hash validation** for data integrity
-- **Business rule checks** (e.g., transaction amount > 0, valid account status)
-- **Schema drift detection**
-- **HTML quality report**
-- Modular and testable design (Pytest)
+- Row count reconciliation between source and target
+- Key uniqueness and missing key detection
+- Null checks on critical columns
+- Business rule validation (transaction amounts, status values)
+- Schema drift detection
+- HTML quality report with overall status
 
 ## Technologies
 
@@ -32,7 +35,6 @@ Data quality issues are one of the most common causes of production incidents in
 - Faker (synthetic data)
 - Pytest
 - Jinja2 (HTML reports)
-- (Optional) Great Expectations
 
 ## Project Structure
 
@@ -43,47 +45,37 @@ src/
   quality_checks.py      # Data quality rules
   reporter.py            # HTML report generator
 tests/
-  test_reconciler.py
   test_quality_checks.py
 data/
   raw/                   # Source data
-  processed/             # Target / cleaned data
+  processed/             # Target data
 reports/                 # Generated HTML reports
 ```
 
 ## How to Run
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
 
-# Generate synthetic data and run reconciliation
+# Generate data and run full pipeline
 python src/data_generator.py
-python src/reconciler.py
+python src/reporter.py
 
 # Run tests
 pytest tests/ -v
-
-# View report
-open reports/data_quality_report.html
 ```
 
-## Example Results
+## Example Output
 
-The framework detects:
+The framework detects real issues such as:
 - Row count mismatches
-- Checksum differences
+- Missing keys
+- Null values in critical fields
 - Invalid transaction amounts
-- Missing required fields
-- Schema changes between source and target
-
-## Future Improvements
-
-- Integrate with Apache Airflow as a data quality task
-- Add Great Expectations suite
-- Support incremental reconciliation
-- Connect to real databases (Postgres / DuckDB)
 
 ## Author
 
 Built as a portfolio project to demonstrate the combination of QA testing practices and Data Engineering data quality skills.
+```
+
+
