@@ -1,4 +1,4 @@
-Bir az formatı pozulub. Bunu tam kopyalayıb `README.md`-ə yapışdır:
+
 
 ```markdown
 # Banking Data Quality & Reconciliation Framework
