@@ -1,0 +1,65 @@
+# Data Quality Rules Configuration
+# Severity: critical | warning | info
+# threshold: maximum allowed failures (0 = must be perfect)
+
+rules:
+  - name: transactions_row_count
+    description: "Source and target transaction row counts must match"
+    severity: critical
+    threshold: 0
+    type: row_count
+    table: transactions
+
+  - name: transactions_amount_sum
+    description: "Sum of transaction amounts must match between source and target"
+    severity: critical
+    threshold: 0.01
+    type: amount_sum
+    table: transactions
+
+  - name: missing_transaction_keys
+    description: "No transactions should be missing in target"
+    severity: critical
+    threshold: 0
+    type: missing_keys
+    table: transactions
+    key: transaction_id
+
+  - name: orphan_transactions
+    description: "Every transaction must reference a valid account"
+    severity: critical
+    threshold: 0
+    type: referential_integrity
+    child_table: transactions
+    parent_table: accounts
+    child_key: account_id
+    parent_key: account_id
+
+  - name: duplicate_transactions
+    description: "No duplicate transaction_id in source"
+    severity: critical
+    threshold: 0
+    type: uniqueness
+    table: transactions
+    column: transaction_id
+
+  - name: balance_reconciliation
+    description: "Opening balance + credits - debits should equal closing balance (simplified)"
+    severity: warning
+    threshold: 5
+    type: balance_check
+
+  - name: data_freshness
+    description: "Most recent transaction should not be older than 7 days"
+    severity: warning
+    threshold: 7
+    type: freshness
+    table: transactions
+    date_column: transaction_date
+
+  - name: pii_email_masking
+    description: "Emails in target should be masked (example check)"
+    severity: info
+    type: pii_mask
+    table: customers
+    column: email
