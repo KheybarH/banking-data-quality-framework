@@ -32,11 +32,11 @@ def run_rule(conn, rule):
     elif rtype == "amount_sum":
         q = text("""
             SELECT 
-                ROUND(COALESCE(SUM(amount),0),2) AS src_sum
+                ROUND(COALESCE(SUM(amount),0)::numeric, 2)
             FROM source.transactions
         """)
         src = conn.execute(q).scalar()
-        q2 = text("SELECT ROUND(COALESCE(SUM(amount),0),2) FROM target.transactions")
+        q2 = text("SELECT ROUND(COALESCE(SUM(amount),0)::numeric, 2) FROM target.transactions")
         tgt = conn.execute(q2).scalar()
         result["details"] = {"source_sum": float(src), "target_sum": float(tgt)}
         result["passed"] = abs(float(src) - float(tgt)) <= rule.get("threshold", 0)
@@ -75,7 +75,7 @@ def run_rule(conn, rule):
 
     elif rtype == "freshness":
         q = text(f"""
-            SELECT EXTRACT(DAY FROM (CURRENT_TIMESTAMP - MAX({rule['date_column']}))) 
+            SELECT EXTRACT(DAY FROM (CURRENT_TIMESTAMP - MAX({rule['date_column']}::timestamp))) 
             FROM source.{rule['table']}
         """)
         days = conn.execute(q).scalar() or 999
